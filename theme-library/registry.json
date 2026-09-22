@@ -1,0 +1,15 @@
+{
+  "version": "1.0",
+  "components": [
+    {"name":"Hero","category":"hero","path":"components/theme/Hero.tsx","props":["title","text","eyebrow"]},
+    {"name":"SectionTitle","category":"content","path":"components/theme/SectionTitle.tsx","props":["eyebrow","title","text"]},
+    {"name":"ServiceCard","category":"card","path":"components/theme/ServiceCard.tsx","props":["title","text"]},
+    {"name":"Header","category":"navigation","path":"components/Header.tsx"},
+    {"name":"Footer","category":"navigation","path":"components/Footer.tsx"}
+  ],
+  "sections": [
+    {"name":"ThreeServiceGrid","category":"services","description":"Three reusable service cards in a responsive grid."},
+    {"name":"FourStepProcess","category":"process","description":"Four numbered steps for a process/how-it-works page."},
+    {"name":"AssessmentCTA","category":"cta","description":"A final call-to-action linking to the assessment/contact flow."}
+  ]
+}
