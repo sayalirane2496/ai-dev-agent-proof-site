@@ -6,7 +6,7 @@ import { ServiceCard } from '@/components/theme/ServiceCard';
 export default function HomePage() {
   return (
     <>
-      <Hero title="Make the next move obvious." text="Northstar helps growing businesses turn scattered priorities into a clear, measurable plan of action." />
+      <Hero title="Vercel Preview Test" text="Northstar helps growing businesses turn scattered priorities into a clear, measurable plan of action." />
       <div className="proof-band"><div className="wrap">Assess → Strategize → Execute · A deliberate system for better decisions and better follow-through.</div></div>
       <section className="section"><div className="wrap">
         <SectionTitle eyebrow="What we do" title="One coordinated approach." text="Bring strategy, operations and execution into the same room instead of running disconnected programs." />
