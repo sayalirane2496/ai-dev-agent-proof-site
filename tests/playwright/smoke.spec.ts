@@ -26,7 +26,7 @@ test.describe('site smoke checks', () => {
   test('contact validation rejects invalid input', async ({ page }) => {
     await page.goto('/contact');
     await page.getByRole('button', { name: /request assessment/i }).click();
-    await expect(page.locator('#name')).toBeFocused();
+    await expect(page.locator('.status')).toContainText(/name is required/i);
     await page.locator('#name').fill('Test User');
     await page.locator('#email').fill('not-an-email');
     await page.locator('#message').fill('Testing validation');

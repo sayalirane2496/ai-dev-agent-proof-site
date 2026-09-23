@@ -1,0 +1,4 @@
+{
+  "name": "ai-dev-agent-proof-site",
+  "install": "npm install\nnpx playwright install --with-deps chromium"
+}
