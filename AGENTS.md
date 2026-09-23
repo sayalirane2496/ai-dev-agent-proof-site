@@ -39,3 +39,49 @@ Cloud Agents have their own development VM. Use repository files, configured env
 - Playwright proof passes.
 - Git changes are focused and reviewable.
 - Vercel preview is ready for human review.
+
+## Decision and Change Approval
+
+- Do not assume requirements, design decisions, business logic, architecture, libraries, services, integrations, database changes, or implementation details that were not explicitly provided.
+- If something is unclear, ambiguous, missing, or could reasonably be implemented in multiple ways, STOP and ask me before making the change.
+- Before adding anything new that was not explicitly requested, ask for confirmation first.
+- This includes:
+  - new pages
+  - new components
+  - new sections
+  - new dependencies/packages
+  - new APIs
+  - database tables/columns/indexes
+  - authentication
+  - third-party services
+  - integrations
+  - environment variables
+  - configuration changes
+  - new files
+  - new design patterns
+  - new functionality
+- Prefer reusing existing components, utilities, dependencies, APIs, styles, and patterns.
+- Do not replace an existing implementation with a new approach without asking first.
+- Do not remove existing functionality without asking first.
+- Do not make "helpful" additions that were not requested.
+- Do not infer missing content, copy, images, business rules, or data.
+- If a required item is missing, ask me instead of inventing it.
+
+## Confirmation Protocol
+
+Before making any unrequested addition or architectural change:
+1. Explain what is missing or unclear.
+2. Explain the proposed change briefly.
+3. Ask for my confirmation.
+4. STOP and wait for my response.
+
+Never continue past a required confirmation point.
+
+## Deployment Approval
+
+- Never merge a PR automatically.
+- Never push directly to main.
+- Never deploy to production automatically.
+- QA passing does not mean production deployment is approved.
+- Stop after the PR and preview deployment are ready.
+- Production deployment requires my explicit confirmation.
