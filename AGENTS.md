@@ -85,3 +85,9 @@ Never continue past a required confirmation point.
 - QA passing does not mean production deployment is approved.
 - Stop after the PR and preview deployment are ready.
 - Production deployment requires my explicit confirmation.
+
+## Cost and External Service Approval
+
+- Do not create, upgrade, purchase, subscribe to, or enable any paid service, plan, API, plugin, domain, hosting resource, or third-party service without my explicit confirmation.
+- Do not increase usage limits or spending limits without my explicit confirmation.
+- If a requested task requires a paid service or may incur additional cost, explain the requirement and estimated cost and STOP for confirmation.
