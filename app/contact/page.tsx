@@ -8,15 +8,22 @@ export default function ContactPage() {
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    const name = String(formData.get('name') ?? '').trim();
+    if (!name) {
+      form.querySelector<HTMLInputElement>('#name')?.focus();
+      return;
+    }
+
     setStatus('');
     setBusy(true);
-    const form = new FormData(event.currentTarget);
     try {
-      const response = await fetch('/api/contact', { method: 'POST', body: JSON.stringify(Object.fromEntries(form)), headers: { 'Content-Type': 'application/json' } });
+      const response = await fetch('/api/contact', { method: 'POST', body: JSON.stringify(Object.fromEntries(formData)), headers: { 'Content-Type': 'application/json' } });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? 'Something went wrong.');
       setStatus('Thanks. Your assessment request has been received.');
-      event.currentTarget.reset();
+      form.reset();
     } catch (error) {
       setStatus(error instanceof Error ? error.message : 'Unable to submit the form.');
     } finally {
