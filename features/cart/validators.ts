@@ -40,9 +40,14 @@ export function parseQuotePayload(body: unknown): QuotePayload {
   for (const item of itemsRaw) {
     if (!item || typeof item !== 'object') continue;
     const row = item as Record<string, unknown>;
-    const productId = String(row.productId || '');
-    const quantity = Math.max(1, Number(row.quantity || 1));
-    if (!productId) continue;
+    const productId = String(row.productId || '').trim();
+    if (!productId) {
+      throw new Error('Product is required');
+    }
+    const quantity = Number(row.quantity ?? 1);
+    if (!Number.isInteger(quantity) || quantity < 1 || quantity > 99) {
+      throw new Error('Quantity must be between 1 and 99');
+    }
     items.push({
       productId,
       quantity,

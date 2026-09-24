@@ -26,15 +26,24 @@ export async function PATCH(request: Request) {
   const body = await request.json();
   const id = String(body.id || '');
   if (!id) return jsonError('VALIDATION', 'id is required', 400);
+  const patch: Record<string, unknown> = {};
+  if (typeof body.name === 'string') patch.name = body.name;
+  if (typeof body.description === 'string') patch.description = body.description;
+  if (body.priceInr !== undefined) {
+    const price = Number(body.priceInr);
+    if (!Number.isInteger(price) || price < 0) {
+      return jsonError('VALIDATION', 'priceInr must be a non-negative integer', 400);
+    }
+    patch.price_inr = price;
+  }
+  if (typeof body.isActive === 'boolean') patch.is_active = body.isActive;
+  if (typeof body.isVeg === 'boolean') patch.is_veg = body.isVeg;
+  if (Object.keys(patch).length === 0) {
+    return jsonError('VALIDATION', 'No valid fields to update', 400);
+  }
   const { data, error: q } = await supabase
     .from('products')
-    .update({
-      name: body.name,
-      description: body.description,
-      price_inr: body.priceInr,
-      is_active: body.isActive,
-      is_veg: body.isVeg,
-    })
+    .update(patch)
     .eq('id', id)
     .select()
     .single();
