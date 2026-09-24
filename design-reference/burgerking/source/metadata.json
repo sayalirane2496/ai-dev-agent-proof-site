@@ -1,0 +1,6 @@
+{
+  "name": "Burger King India — Online Ordering Redesign",
+  "description": "Premium, modern, high-conversion online ordering experience for Burger King India featuring flame-grilled whoppers, combo builder, location selector, smart cart, and live order tracking.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
