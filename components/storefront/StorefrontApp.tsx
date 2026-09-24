@@ -135,11 +135,13 @@ export default function StorefrontApp() {
   }, [cartItems]);
 
   // Delivery Fee: ₹35 if under ₹299, free if above or pickup
-  const deliveryFee = quotedTotals?.deliveryFee ?? (orderMode === 'pickup' || cartItems.length === 0 ? 0 : cartSubtotal >= 299 ? 0 : 35);
+  const quotedForCart = cartItems.length === 0 ? null : quotedTotals;
 
-  const taxes = quotedTotals?.taxes ?? Math.round(cartSubtotal * 0.05);
+  const deliveryFee = quotedForCart?.deliveryFee ?? (orderMode === 'pickup' || cartItems.length === 0 ? 0 : cartSubtotal >= 299 ? 0 : 35);
 
-  const discountAmount = quotedTotals?.discountAmount ?? (() => {
+  const taxes = quotedForCart?.taxes ?? Math.round(cartSubtotal * 0.05);
+
+  const discountAmount = quotedForCart?.discountAmount ?? (() => {
     if (!appliedCouponCode || cartSubtotal === 0) return 0;
     if (appliedCouponCode === 'KING50') {
       return cartSubtotal >= 199 ? Math.min(100, Math.round(cartSubtotal * 0.5)) : 0;
@@ -151,11 +153,10 @@ export default function StorefrontApp() {
     return 0;
   })();
 
-  const totalAmount = quotedTotals?.totalAmount ?? Math.max(0, cartSubtotal + deliveryFee + taxes - discountAmount);
+  const totalAmount = quotedForCart?.totalAmount ?? Math.max(0, cartSubtotal + deliveryFee + taxes - discountAmount);
 
   useEffect(() => {
     if (cartItems.length === 0) {
-      setQuotedTotals(null);
       return;
     }
     let cancelled = false;
