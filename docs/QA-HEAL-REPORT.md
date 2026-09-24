@@ -182,4 +182,6 @@ Full product test and self-heal of the Burger King–style application against `
 
 ## Playwright
 
-See final verification section after `npm run qa`.
+Final run: `npm run typecheck` pass, `npm run lint` pass, `npm run build` pass, `npm run qa` **44 passed** (chromium + mobile), 0 failed.
+
+Heal regressions: unknown product, invalid coupon, quantity cap, total tampering, admin/kitchen 401, cart dialog name.
