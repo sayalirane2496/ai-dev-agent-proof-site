@@ -1,6 +1,6 @@
 # Burger King — Production Architecture (Proposal)
 
-**Status:** proposal only. Not implemented.  
+**Status:** implemented on `feature/burgerking-development`. Production deploy is not authorized.  
 **Branch for this analysis:** `feature/burgerking-development`  
 **Do not merge to `main` until you approve.**
 

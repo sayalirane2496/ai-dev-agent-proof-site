@@ -1,6 +1,11 @@
 # Burger King — Component Map
 
-**Status:** analysis only. No production components were created.
+**Status:** production mapping for the implemented storefront.
+
+| Lookup | Result |
+|---|---|
+| `theme-library/` | Not in this repository |
+| Production UI | `components/storefront/*`, `app/page.tsx`, `/login`, `/admin`, `/kitchen` |
 
 **Reference root:** `design-reference/burgerking/source/src/`
 
