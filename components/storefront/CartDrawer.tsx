@@ -47,20 +47,42 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 }) => {
   const [couponInput, setCouponInput] = useState('');
   const [couponError, setCouponError] = useState('');
+  const [couponBusy, setCouponBusy] = useState(false);
 
   if (!isOpen) return null;
 
-  const handleApplyCoupon = (e: React.FormEvent) => {
+  const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     setCouponError('');
     if (!couponInput.trim()) return;
 
     const normalized = couponInput.trim().toUpperCase();
-    if (['KING50', 'BOGO79', 'MEALUP', 'FEAST150', 'SWEETKING'].includes(normalized)) {
+    setCouponBusy(true);
+    try {
+      const response = await fetch('/api/v1/cart/quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: cartItems.map((item) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            customizations: item.customizations,
+          })),
+          couponCode: normalized,
+          fulfillmentType: 'delivery',
+        }),
+      });
+      const json = await response.json();
+      if (!json.ok) {
+        setCouponError(json.error?.message || 'Invalid promo code');
+        return;
+      }
       onApplyCouponCode(normalized);
       setCouponInput('');
-    } else {
-      setCouponError('Invalid promo code. Try KING50, BOGO79 or FEAST150');
+    } catch {
+      setCouponError('Could not apply promo code');
+    } finally {
+      setCouponBusy(false);
     }
   };
 
@@ -70,6 +92,9 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   return (
     <div className="fixed inset-0 z-50 overflow-hidden bg-black/60 backdrop-blur-xs flex justify-end animate-fade-in">
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cart-drawer-title"
         className="w-full max-w-md bg-[#FDFBF7] h-full shadow-2xl flex flex-col justify-between overflow-hidden border-l border-[#E6DDD0]"
         onClick={(e) => e.stopPropagation()}
       >
@@ -80,7 +105,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               <ShoppingBag className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="font-display font-black text-lg text-[#241812] leading-tight">
+              <h2 id="cart-drawer-title" className="font-display font-black text-lg text-[#241812] leading-tight">
                 YOUR ORDER
               </h2>
               <span className="text-xs text-[#59483F] font-semibold">
@@ -311,7 +336,8 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   />
                   <button
                     type="submit"
-                    className="px-3.5 py-2 bg-[#241812] hover:bg-[#3B291F] text-white font-bold text-xs rounded-xl cursor-pointer"
+                    disabled={couponBusy}
+                    className="px-3.5 py-2 bg-[#241812] hover:bg-[#3B291F] text-white font-bold text-xs rounded-xl cursor-pointer disabled:opacity-60"
                   >
                     Apply
                   </button>

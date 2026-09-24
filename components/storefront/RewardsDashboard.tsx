@@ -122,6 +122,9 @@ export const RewardsDashboard: React.FC<RewardsDashboardProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-xs animate-fade-in overflow-y-auto">
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="rewards-title"
         className="bg-[#FDFBF7] rounded-3xl w-full max-w-3xl max-h-[92vh] shadow-2xl border border-[#E8DFD0] overflow-hidden flex flex-col my-auto"
         onClick={(e) => e.stopPropagation()}
       >
@@ -132,7 +135,7 @@ export const RewardsDashboard: React.FC<RewardsDashboardProps> = ({
               <Crown className="w-4 h-4 fill-[#ED7117]" />
             </div>
             <div>
-              <h2 className="font-display font-black text-lg text-[#241812] leading-tight">
+              <h2 id="rewards-title" className="font-display font-black text-lg text-[#241812] leading-tight">
                 KING CLUB REWARDS
               </h2>
               <span className="text-xs text-[#59483F] font-semibold">

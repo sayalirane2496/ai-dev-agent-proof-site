@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Product, CartItem, SelectedCustomizations, RestaurantLocation, UserOrder, OfferDeal } from '@/lib/types';
 import { INITIAL_ORDERS, PRODUCTS } from '@/features/catalog/mock-fallback';
 import { useCatalog } from '@/features/catalog/catalog-context';
@@ -101,6 +101,12 @@ export default function StorefrontApp() {
   const [isRewardsOpen, setIsRewardsOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [pastOrders, setPastOrders] = useState<UserOrder[]>(INITIAL_ORDERS);
+  const [quotedTotals, setQuotedTotals] = useState<{
+    deliveryFee: number;
+    taxes: number;
+    discountAmount: number;
+    totalAmount: number;
+  } | null>(null);
 
   // Toast Notification
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -129,40 +135,66 @@ export default function StorefrontApp() {
   }, [cartItems]);
 
   // Delivery Fee: ₹35 if under ₹299, free if above or pickup
-  const deliveryFee = useMemo(() => {
-    if (orderMode === 'pickup' || cartItems.length === 0) return 0;
-    return cartSubtotal >= 299 ? 0 : 35;
-  }, [orderMode, cartSubtotal, cartItems]);
+  const deliveryFee = quotedTotals?.deliveryFee ?? (orderMode === 'pickup' || cartItems.length === 0 ? 0 : cartSubtotal >= 299 ? 0 : 35);
 
-  // Indian GST (5%)
-  const taxes = useMemo(() => {
-    return Math.round(cartSubtotal * 0.05);
-  }, [cartSubtotal]);
+  const taxes = quotedTotals?.taxes ?? Math.round(cartSubtotal * 0.05);
 
-  // Coupon Discount
-  const discountAmount = useMemo(() => {
+  const discountAmount = quotedTotals?.discountAmount ?? (() => {
     if (!appliedCouponCode || cartSubtotal === 0) return 0;
     if (appliedCouponCode === 'KING50') {
       return cartSubtotal >= 199 ? Math.min(100, Math.round(cartSubtotal * 0.5)) : 0;
     }
-    if (appliedCouponCode === 'BOGO79') {
-      return 59;
-    }
-    if (appliedCouponCode === 'MEALUP') {
-      return 99;
-    }
-    if (appliedCouponCode === 'FEAST150') {
-      return cartSubtotal >= 499 ? 150 : 0;
-    }
-    if (appliedCouponCode === 'SWEETKING') {
-      return cartSubtotal >= 299 ? 99 : 0;
-    }
+    if (appliedCouponCode === 'BOGO79') return 59;
+    if (appliedCouponCode === 'MEALUP') return 99;
+    if (appliedCouponCode === 'FEAST150') return cartSubtotal >= 499 ? 150 : 0;
+    if (appliedCouponCode === 'SWEETKING') return cartSubtotal >= 299 ? 99 : 0;
     return 0;
-  }, [appliedCouponCode, cartSubtotal]);
+  })();
 
-  const totalAmount = useMemo(() => {
-    return Math.max(0, cartSubtotal + deliveryFee + taxes - discountAmount);
-  }, [cartSubtotal, deliveryFee, taxes, discountAmount]);
+  const totalAmount = quotedTotals?.totalAmount ?? Math.max(0, cartSubtotal + deliveryFee + taxes - discountAmount);
+
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      setQuotedTotals(null);
+      return;
+    }
+    let cancelled = false;
+    const timer = window.setTimeout(() => {
+      void (async () => {
+        try {
+          const response = await fetch('/api/v1/cart/quote', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              items: cartItems.map((item) => ({
+                productId: item.productId,
+                quantity: item.quantity,
+                customizations: item.customizations,
+              })),
+              couponCode: appliedCouponCode,
+              fulfillmentType: orderMode,
+              restaurantId: selectedLocation.id,
+            }),
+          });
+          const json = await response.json();
+          if (!cancelled && json.ok && json.data) {
+            setQuotedTotals({
+              deliveryFee: json.data.deliveryFee,
+              taxes: json.data.taxes,
+              discountAmount: json.data.discountAmount,
+              totalAmount: json.data.totalAmount,
+            });
+          }
+        } catch {
+          /* keep last client estimate until a successful quote */
+        }
+      })();
+    }, 200);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [cartItems, appliedCouponCode, orderMode, selectedLocation.id]);
 
   // Handlers for Add To Cart & Quantity Adjustments
   const handleAddToCart = (product: Product) => {
@@ -224,7 +256,9 @@ export default function StorefrontApp() {
   const handleCartItemIncrement = (cartItemId: string) => {
     setCartItems(
       cartItems.map((item) =>
-        item.cartItemId === cartItemId ? { ...item, quantity: item.quantity + 1 } : item
+        item.cartItemId === cartItemId
+          ? { ...item, quantity: Math.min(99, item.quantity + 1) }
+          : item
       )
     );
   };

@@ -25,10 +25,8 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   onClose,
   cartItems,
   subtotal,
-  deliveryFee,
   taxes,
   discountAmount,
-  totalAmount,
   selectedLocation,
   orderMode = 'delivery',
   couponCode = '',
@@ -47,6 +45,10 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   const [formError, setFormError] = useState('');
 
   if (!isOpen) return null;
+
+  const displayDeliveryFee =
+    deliveryMode === 'pickup' || cartItems.length === 0 ? 0 : subtotal >= 299 ? 0 : 35;
+  const displayTotal = Math.max(0, subtotal + displayDeliveryFee + taxes - discountAmount);
 
   const fullAddress = `${flatNo}, ${landmark}, ${selectedLocation.locality}, ${selectedLocation.city}`;
 
@@ -101,13 +103,16 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-xs animate-fade-in overflow-y-auto">
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="checkout-title"
         className="bg-[#FDFBF7] rounded-3xl w-full max-w-4xl max-h-[94vh] shadow-2xl border border-[#E8DFD0] overflow-hidden flex flex-col my-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Modal Header with Progress Stepper */}
         <div className="p-4 sm:p-5 border-b border-[#ECE3D5] flex items-center justify-between bg-white">
           <div className="flex items-center gap-3">
-            <h2 className="text-lg sm:text-xl font-black font-display text-[#241812]">
+            <h2 id="checkout-title" className="text-lg sm:text-xl font-black font-display text-[#241812]">
               ROYAL CHECKOUT
             </h2>
             <div className="hidden sm:flex items-center gap-2 text-xs font-bold text-stone-500">
@@ -441,7 +446,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                   ) : (
                     <>
                       <span>
-                        {paymentMethod === 'cod' ? 'PLACE COD ORDER' : 'PAY (TEST MODE)'} — ₹{totalAmount}
+                        {paymentMethod === 'cod' ? 'PLACE COD ORDER' : 'PAY (TEST MODE)'} — ₹{displayTotal}
                       </span>
                       <ArrowRight className="w-5 h-5" />
                     </>
@@ -483,7 +488,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 <div className="flex justify-between">
                   <span>Delivery Fee</span>
                   <span className="font-semibold tabular-nums">
-                    {deliveryFee === 0 ? <span className="text-[#008738] font-bold">FREE</span> : `₹${deliveryFee}`}
+                    {displayDeliveryFee === 0 ? <span className="text-[#008738] font-bold">FREE</span> : `₹${displayDeliveryFee}`}
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -498,7 +503,7 @@ export const CheckoutModal: React.FC<CheckoutModalProps> = ({
                 )}
                 <div className="flex justify-between text-lg font-black font-display text-[#241812] pt-2 border-t border-[#EAE2D5]">
                   <span>Total Amount</span>
-                  <span className="text-[#D62300] tabular-nums">₹{totalAmount}</span>
+                  <span className="text-[#D62300] tabular-nums">₹{displayTotal}</span>
                 </div>
               </div>
             </div>

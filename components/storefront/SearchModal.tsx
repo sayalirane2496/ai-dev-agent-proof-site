@@ -37,6 +37,9 @@ export const SearchModal: React.FC<SearchModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-24 p-4 bg-black/70 backdrop-blur-xs animate-fade-in">
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Search menu"
         className="bg-[#FDFBF7] rounded-3xl w-full max-w-xl shadow-2xl border border-[#E8DFD0] overflow-hidden flex flex-col max-h-[80vh]"
         onClick={(e) => e.stopPropagation()}
       >

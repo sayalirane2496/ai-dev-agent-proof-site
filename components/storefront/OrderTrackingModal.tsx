@@ -40,6 +40,9 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-xs animate-fade-in overflow-y-auto">
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tracking-title"
         className="bg-[#FDFBF7] rounded-3xl w-full max-w-2xl max-h-[92vh] shadow-2xl border border-[#E8DFD0] overflow-hidden flex flex-col my-auto"
         onClick={(e) => e.stopPropagation()}
       >
@@ -50,7 +53,7 @@ export const OrderTrackingModal: React.FC<OrderTrackingModalProps> = ({
               Live Order Tracker
             </span>
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-black font-display text-[#241812]">
+              <h2 id="tracking-title" className="text-xl font-black font-display text-[#241812]">
                 ORDER #{order.orderId}
               </h2>
               <span className="bg-[#EAF7EE] text-[#008738] text-[10px] font-bold px-2 py-0.5 rounded-md">

@@ -81,6 +81,9 @@ export const ProductCustomizerModal: React.FC<ProductCustomizerModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/70 backdrop-blur-xs animate-fade-in">
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="customizer-title"
         className="bg-[#FDFBF7] w-full md:max-w-2xl rounded-t-3xl md:rounded-3xl max-h-[92vh] flex flex-col overflow-hidden shadow-2xl border border-[#E9E0D1]"
         onClick={(e) => e.stopPropagation()}
       >
@@ -89,7 +92,7 @@ export const ProductCustomizerModal: React.FC<ProductCustomizerModalProps> = ({
           <div className="flex items-center gap-3">
             <FoodTypeBadge isVeg={product.isVeg} size="md" />
             <div>
-              <h2 className="text-lg md:text-xl font-black font-display text-[#241812] leading-tight">
+              <h2 id="customizer-title" className="text-lg md:text-xl font-black font-display text-[#241812] leading-tight">
                 {product.name}
               </h2>
               <span className="text-xs text-[#59483F] font-semibold">

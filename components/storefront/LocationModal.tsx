@@ -48,13 +48,16 @@ export const LocationModal: React.FC<LocationModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="location-modal-title"
         className="bg-[#FDFBF7] rounded-3xl w-full max-w-lg overflow-hidden shadow-2xl border border-[#EBE4D8] flex flex-col max-h-[90vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="p-5 border-b border-[#EAE2D5] flex items-center justify-between bg-white">
           <div>
-            <h2 className="text-xl font-bold font-display text-[#241812]">
+            <h2 id="location-modal-title" className="text-xl font-bold font-display text-[#241812]">
               Where should we deliver?
             </h2>
             <p className="text-xs text-[#59483F] font-medium mt-0.5">
