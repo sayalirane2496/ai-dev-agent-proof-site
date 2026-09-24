@@ -270,7 +270,7 @@ as $$
   );
 $$;
 
-create or replace function public.coupon_discount(code text, subtotal integer)
+create or replace function public.coupon_discount(promo_code text, subtotal integer)
 returns integer
 language plpgsql
 stable
@@ -279,11 +279,11 @@ declare
   c public.coupons%rowtype;
   amt integer := 0;
 begin
-  if code is null or btrim(code) = '' or subtotal <= 0 then
+  if promo_code is null or btrim(promo_code) = '' or subtotal <= 0 then
     return 0;
   end if;
 
-  select * into c from public.coupons where upper(coupons.code) = upper(btrim(code)) and is_active = true;
+  select * into c from public.coupons where upper(coupons.code) = upper(btrim(promo_code)) and is_active = true;
   if not found then
     return 0;
   end if;
