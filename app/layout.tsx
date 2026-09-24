@@ -1,20 +1,16 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
 
 export const metadata: Metadata = {
-  title: 'Northstar Advisory',
-  description: 'A practical consulting proof site built for an autonomous AI development workflow.',
+  title: 'Application foundation',
+  description: 'Minimum Next.js foundation for the approved rebuild.',
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
       <body>
-        <Header />
-        <main className="site-main">{children}</main>
-        <Footer />
+        {children}
       </body>
     </html>
   );
