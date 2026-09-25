@@ -13,17 +13,23 @@
     "qa:install": "playwright install --with-deps chromium"
   },
   "dependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.117.1",
+    "lucide-react": "^1.48.0",
     "next": "16.3.3",
     "react": "19.3.0",
     "react-dom": "19.3.0"
   },
   "devDependencies": {
     "@playwright/test": "1.63.0",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "22.18.7",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
     "eslint": "9.36.0",
     "eslint-config-next": "16.3.3",
+    "postcss": "^8.5.28",
+    "tailwindcss": "^4.3.3",
     "typescript": "5.9.2"
   }
 }

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-test('foundation home page loads', async ({ page }) => {
-  const response = await page.goto('/', { waitUntil: 'networkidle' });
+test('home page heading is present', async ({ page }) => {
+  const response = await page.goto('/', { waitUntil: 'domcontentloaded' });
   expect(response?.ok()).toBeTruthy();
-  await expect(page.locator('h1')).toHaveText('Application foundation');
+  await expect(page.getByRole('heading', { name: /burger king india/i })).toBeVisible();
 });
