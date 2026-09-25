@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { UserOrder } from '@/lib/types';
+import { useAuth } from '@/features/auth';
 import { FoodTypeBadge } from '@/components/storefront/FoodTypeBadge';
 import { Crown, Sparkles, Gift, Clock, MapPin, Repeat, Check, ArrowRight, ShieldCheck, X } from 'lucide-react';
 
@@ -31,22 +32,14 @@ export const RewardsDashboard: React.FC<RewardsDashboardProps> = ({
   onReorder,
   onTrackOrder,
 }) => {
+  const { user, profile } = useAuth();
+  const signedIn = Boolean(user);
   const [activeTab, setActiveTab] = useState<'rewards' | 'orders' | 'addresses'>('rewards');
-  const [points, setPoints] = useState(1250);
+  const [points, setPoints] = useState(0);
   const [redeemedReward, setRedeemedReward] = useState<string | null>(null);
-  const [signedIn, setSignedIn] = useState(false);
-  const [addresses, setAddresses] = useState<SavedAddress[]>([
-    {
-      label: 'Home',
-      address: 'Flat 402, Sea Green Heights, Andheri West, Mumbai 400053',
-      isDefault: true,
-    },
-    {
-      label: 'Office',
-      address: 'Level 5, Platina Tower, Bandra Kurla Complex (BKC), Mumbai 400051',
-      isDefault: false,
-    },
-  ]);
+  const [addresses, setAddresses] = useState<SavedAddress[]>([]);
+  const visiblePoints = signedIn ? points : 0;
+  const visibleAddresses = signedIn ? addresses : [];
   const [editing, setEditing] = useState<string | null>(null);
   const [editValue, setEditValue] = useState('');
   const [newLabel, setNewLabel] = useState('Other');
@@ -60,12 +53,11 @@ export const RewardsDashboard: React.FC<RewardsDashboardProps> = ({
   ];
 
   React.useEffect(() => {
-    if (!isOpen) return;
+    if (!isOpen || !user) return;
     fetch('/api/v1/rewards')
       .then((r) => r.json())
       .then((json) => {
         if (json.ok && json.data.signedIn) {
-          setSignedIn(true);
           setPoints(json.data.points);
         }
       })
@@ -89,12 +81,12 @@ export const RewardsDashboard: React.FC<RewardsDashboardProps> = ({
         }
       })
       .catch(() => undefined);
-  }, [isOpen]);
+  }, [isOpen, user]);
 
   if (!isOpen) return null;
 
   const handleRedeem = async (id: string, name: string, cost: number) => {
-    if (points < cost) {
+    if (visiblePoints < cost) {
       alert(`You need ${cost - points} more Crown Points to unlock this reward! Keep ordering Whoppers.`);
       return;
     }
@@ -138,8 +130,10 @@ export const RewardsDashboard: React.FC<RewardsDashboardProps> = ({
               <h2 id="rewards-title" className="font-display font-black text-lg text-[#241812] leading-tight">
                 KING CLUB REWARDS
               </h2>
-              <span className="text-xs text-[#59483F] font-semibold">
-                Hi, Vikram · Crown Gold Member
+              <span className="text-xs text-[#59483F] font-semibold" data-testid="rewards-identity">
+                {user && profile
+                  ? `Hi, ${profile.display_name || user.email}`
+                  : 'Guest · Sign in to save rewards'}
               </span>
             </div>
           </div>
@@ -161,7 +155,7 @@ export const RewardsDashboard: React.FC<RewardsDashboardProps> = ({
               </span>
               <div className="flex items-baseline gap-2 mt-1">
                 <span className="text-3xl sm:text-4xl font-black font-display text-white tabular-nums">
-                  {points.toLocaleString()}
+                  {visiblePoints.toLocaleString()}
                 </span>
                 <span className="text-sm font-bold text-[#FFB703]">PTS</span>
               </div>
@@ -178,11 +172,11 @@ export const RewardsDashboard: React.FC<RewardsDashboardProps> = ({
               <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden">
                 <div
                   className="h-full bg-[#FFB703] rounded-full transition-all duration-500"
-                  style={{ width: `${Math.min(100, (points / 1400) * 100)}%` }}
+                  style={{ width: `${Math.min(100, (visiblePoints / 1400) * 100)}%` }}
                 />
               </div>
               <span className="text-[10px] text-stone-400 block pt-0.5">
-                {Math.max(0, 1400 - points)} points away from your next free feast!
+                {Math.max(0, 1400 - visiblePoints)} points away from your next free feast!
               </span>
             </div>
           </div>
@@ -234,7 +228,7 @@ export const RewardsDashboard: React.FC<RewardsDashboardProps> = ({
           {activeTab === 'rewards' && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {rewardsCatalog.map((rew) => {
-                const canAfford = points >= rew.pointsCost;
+                const canAfford = visiblePoints >= rew.pointsCost;
                 return (
                   <div
                     key={rew.id}
@@ -338,7 +332,7 @@ export const RewardsDashboard: React.FC<RewardsDashboardProps> = ({
 
           {activeTab === 'addresses' && (
             <div className="space-y-3">
-              {addresses.map((addr) => (
+              {visibleAddresses.map((addr) => (
                 <div
                   key={addr.label}
                   className="bg-white p-4 rounded-2xl border border-[#E8DFD0] flex items-start justify-between gap-3 shadow-xs"

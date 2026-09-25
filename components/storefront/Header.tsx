@@ -4,7 +4,9 @@ import React, { useState } from 'react';
 import { BurgerKingLogo } from '@/components/storefront/BurgerKingLogo';
 import { RestaurantLocation } from '@/lib/types';
 import { MapPin, ShoppingBag, Search, User, Crown, ChevronDown } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/features/auth';
 
 interface HeaderProps {
   selectedLocation: RestaurantLocation;
@@ -30,6 +32,9 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenRewards,
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const { user, profile, signOut } = useAuth();
+  const signedIn = Boolean(user && profile);
+  const router = useRouter();
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -153,13 +158,32 @@ export const Header: React.FC<HeaderProps> = ({
           </button>
 
           {/* Rewards Profile Trigger (Desktop) */}
-          <Link
-            href="/login"
-            data-testid="login-link"
-            className="hidden md:flex items-center px-3 py-2 rounded-full hover:bg-[#F3ECE0] text-[#241812] font-semibold text-xs"
-          >
-            Sign in
-          </Link>
+          {signedIn ? (
+            <div className="hidden md:flex items-center gap-1">
+              <span className="px-2 text-xs font-bold text-[#241812] max-w-[120px] truncate" data-testid="header-customer-name">
+                {profile?.display_name || user?.email}
+              </span>
+              <button
+                type="button"
+                data-testid="header-sign-out"
+                onClick={async () => {
+                  await signOut();
+                  router.refresh();
+                }}
+                className="px-3 py-2 rounded-full hover:bg-[#F3ECE0] text-[#241812] font-semibold text-xs cursor-pointer"
+              >
+                Sign out
+              </button>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              data-testid="login-link"
+              className="hidden md:flex items-center px-3 py-2 rounded-full hover:bg-[#F3ECE0] text-[#241812] font-semibold text-xs"
+            >
+              Sign in
+            </Link>
+          )}
           <button
             onClick={onOpenRewards}
             data-testid="open-account"
